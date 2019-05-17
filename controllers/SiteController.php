@@ -2,10 +2,7 @@
 
 namespace app\controllers;
 
-use app\models\logic\Plank;
-use app\models\logic\Sheet;
-use app\models\OrderStock;
-use app\models\ProviderStock;
+
 use Yii;
 use yii\filters\AccessControl;
 use yii\helpers\ArrayHelper;
@@ -14,8 +11,7 @@ use yii\filters\VerbFilter;
 use app\models\ContactForm;
 use app\models\OrderForm;
 use app\models\Provider;
-use app\models\Order;
-use yii\web\NotFoundHttpException;
+
 
 class SiteController extends BaseController
 {
@@ -118,47 +114,5 @@ class SiteController extends BaseController
             'model' => $orderForm,
             'providerList' => $providerList
         ]);
-    }
-
-    public function actionAdmin()
-    {
-        if (!self::isAdmin()) {
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-
-        $providerStock = ProviderStock::findAll(['provider_id' => [1, 2]]);
-        $providerStockItem = $providerStock[1];
-//        echo '<pre>';
-//        print_r($providerStock);
-//        echo '</pre>';
-
-//        foreach ($providerStock as $providerStockItem) {
-        $allOrderIds = ArrayHelper::getColumn(Order::findAll(['provider_id' => $providerStockItem->provider_id]), 'id');
-
-        $allOrderStocks = OrderStock::findAll(['order_id' => $allOrderIds]);
-
-        $cuttingList = [];
-        foreach ($allOrderStocks as $orderStock) {
-            for ($i = 0; $i < $orderStock->count; $i++) {
-                $cuttingList[] = new Plank($orderStock->length_mm, $orderStock->width_mm);
-            }
-        }
-
-        $sheets = array_fill(0, $providerStockItem->count, new Sheet($providerStockItem->length_mm, $providerStockItem->width_mm));
-
-        foreach ($sheets as $sheet) {
-            echo 'Sheet: ';
-            echo '<pre>';
-            print_r($sheet);
-            echo '</pre>';
-            $cuttingList = $sheet->fill($cuttingList);
-            echo '<pre>';
-            print_r($sheet->getOffcut());
-            echo '</pre>';
-            break;
-        }
-
-        exit;
-//        return $this->render('admin');
     }
 }

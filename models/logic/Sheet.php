@@ -95,15 +95,12 @@ class Sheet
     public function fill(array $planks)
     {
         foreach ($planks as $key => $plank) {
-            if ($key > 4) {
-                break;
-            }
             if ($this->tryToPutThePlank($plank)) {
                 unset($planks[$key]);
-                echo 'Plank: ';
-                echo '<pre>';
-                print_r($plank);
-                echo '</pre>';
+//                echo 'Plank: ';
+//                echo '<pre>';
+//                print_r($plank);
+//                echo '</pre>';
             }
         }
 

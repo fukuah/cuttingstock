@@ -9,6 +9,10 @@ use app\controllers\BaseController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
+use app\models\logic\Plank;
+use app\models\logic\Sheet;
+use app\models\OrderStock;
+use app\models\ProviderStock;
 
 /**
  * OrderController implements the CRUD actions for Order model.
@@ -132,5 +136,41 @@ class OrderController extends BaseController
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    public function actionCutOrders()
+    {
+        if (!self::isAdmin()) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+
+        $allOrderIds = Yii::$app->request->post('selection');
+
+        $providerStock = ProviderStock::findAll(['provider_id' => [1, 2]]);
+        $providerStockItem = $providerStock[1];
+
+
+        $allOrderStocks = OrderStock::findAll(['order_id' => $allOrderIds]);
+
+        $cuttingList = [];
+        foreach ($allOrderStocks as $orderStock) {
+            for ($i = 0; $i < $orderStock->count; $i++) {
+                $cuttingList[] = new Plank($orderStock->length_mm, $orderStock->width_mm);
+            }
+        }
+
+        $sheets = [];
+        for ($i = 0; $i < $providerStockItem->count; $i++) {
+            $sheets[] = new Sheet($providerStockItem->length_mm, $providerStockItem->width_mm);
+            $cuttingList = $sheets[$i]->fill($cuttingList);
+            if (count($cuttingList) == 0) {
+                break;
+            }
+
+        }
+
+        return $this->render('cut-orders', [
+            'sheets' => $sheets
+        ]);
     }
 }
