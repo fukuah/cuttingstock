@@ -8,6 +8,7 @@
 
 namespace app\models\logic;
 
+
 class Plank
 {
     public $length;
@@ -22,4 +23,6 @@ class Plank
         $this->x = $x;
         $this->y = $y;
     }
+
+
 }
