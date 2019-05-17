@@ -14,7 +14,7 @@ class Sheet
     public $length;
     public $width;
 
-    // if cutoff length is less than this constraint it goes to waste
+    // if cutoff length is less than this constraint it goes to wastes
     private static $wasteConstraintMM = 10;
 
     private static $sheetCount;
@@ -23,10 +23,13 @@ class Sheet
     // array of app\models\logic\Plank
     private $planks = [];
 
+    // part remained of sheet after a cut
     private $offcut = [];
 
+    // wastes remained of sheet after a cut
     private $waste = [];
 
+    // wastes' volume remained of sheet after a cut
     private $wasteVol = 0;
 
     public function __construct($length, $width, $offcut = [])
@@ -37,28 +40,41 @@ class Sheet
         $this->offcut = [0 => [[0, 0], [$length, $width]]];
     }
 
+
+    /**
+     * Sets waste constraint to the class.
+     * @param $wasteConstraint
+     *
+     * @return void
+     */
     public static function setWasteConstraint($wasteConstraint)
     {
         self::$wasteConstraintMM = $wasteConstraint;
     }
 
-    public function addPlank(Plank $plank)
-    {
-        $this->planks[] = $plank;
-    }
-
+    /**
+     * Adds a plank to waste.
+     * @param Plank $wastePlank
+     *
+     * @return void
+     */
     public function addToWaste(Plank $wastePlank)
     {
         $this->waste[] = $wastePlank;
         $this->wasteVol += $wastePlank->length * $wastePlank->width;
-
     }
 
+    /**
+     * @return array
+     */
     public function getOffcut()
     {
         return $this->offcut;
     }
 
+    /**
+     * @return integer
+     */
     public function getWasteVol()
     {
         return $this->wasteVol;
