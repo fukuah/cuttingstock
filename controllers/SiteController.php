@@ -3,6 +3,7 @@
 namespace app\controllers;
 
 use app\models\logic\Plank;
+use app\models\logic\Sheet;
 use app\models\OrderStock;
 use app\models\ProviderStock;
 use Yii;
@@ -143,14 +144,21 @@ class SiteController extends BaseController
             }
         }
 
-        //foreach ($cuttingList )
+        $sheets = array_fill(0, $providerStockItem->count, new Sheet($providerStockItem->length_mm, $providerStockItem->width_mm));
 
-        echo '<pre>';
-        print_r($cuttingList);
-        echo '</pre>';
-//        }
+        foreach ($sheets as $sheet) {
+            echo 'Sheet: ';
+            echo '<pre>';
+            print_r($sheet);
+            echo '</pre>';
+            $cuttingList = $sheet->fill($cuttingList);
+            echo '<pre>';
+            print_r($sheet->getOffcut());
+            echo '</pre>';
+            break;
+        }
+
         exit;
-
 //        return $this->render('admin');
     }
 }
