@@ -17,31 +17,86 @@ $canvasAdaptiveCSS = <<<CSS
 }
 CSS;
 
-$sheetObjectJS = '';
+$sheetObjectJS = "
+    var json = '$sheets';
+    var sheets = JSON.parse('$sheets');
+";
 
 $canvasAdaptiveJS = <<<JS
-    function resize(){   
-    var canvas = $("#cutting");
-    canvas.outerHeight($(window).height() - canvas.offset().top - Math.abs(canvas.outerHeight(true) - canvas.outerHeight()));
-  }
   $(document).ready(function(){
+        // var page = 0; 
+        
+        function resize(){   
+            var canvas = $("#responsive-canvas");
+            canvas.outerHeight($(window).height() - canvas.offset().top - Math.abs(canvas.outerHeight(true) - canvas.outerHeight()));
+        }
+    
+        function drawList(sheet){
+            sheet.planks.forEach(function(plank) {
+                ctx.fillStyle = "LightCyan";
+                ctx.fillRect(10 + plank.x*scale, 10 + plank.y*scale, plank.length*scale, plank.width*scale);
+                ctx.fillStyle = "Black";
+                ctx.strokeRect(10 + plank.x*scale, 10 + plank.y*scale, plank.length*scale, plank.width*scale);
+            });
+        } 
+      
+        $('#next-list').click(function(sheets) {
+            var pageInput = $('#page-hidden');
+            var pageTextInput = $('#page');
+            var page = pageInput.val(); 
+            console.log(page);
+            if (page + 1 < sheets.length) {
+                drawList(sheets[page + 1]);
+                pageInput.val(page + 1);
+                pageTextInput.val(page + 1)
+            }
+        });
+        
+        $('#next-prev').on('click', function() {
+            
+        });
+      
         var canvas = document.getElementById('responsive-canvas');
+        
 	    ctx = canvas.getContext('2d');
-	    ctx.fillStyle = "silver";
+	    ctx.lineWidth = 0.3;
+	    
+	    ctx.fillStyle = "Ivory";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        ctx.fillStyle = "silver";
-        ctx.fillRect(50, 50, canvas.width, canvas.height);
+        var primaryX = 10;
+        var primaryY = 10;
+        
+        var scale = 1/18;
+        
+        ctx.fillStyle = "BurlyWood";
+        ctx.fillRect(10, 10, sheets[0].length*scale, sheets[0].width*scale);
+        
+        // ctx.fillStyle = "LightCyan";
+        // ctx.fillRect(10, 10, sheets[page].planks[0].length*scale, sheets[page].planks[0].width*scale);
+        // ctx.fillStyle = "Black";
+        // ctx.strokeRect(10, 10, sheets[page].planks[0].length*scale, sheets[page].planks[0].width*scale);
+        //
+        // ctx.fillStyle = "LightCyan";
+        // ctx.fillRect(10 + sheets[page].planks[1].x*scale, 10 + sheets[page].planks[1].y*scale, sheets[page].planks[1].length*scale, sheets[page].planks[1].width*scale);
+        // ctx.fillStyle = "Black";
+        // ctx.strokeRect(10 + sheets[page].planks[1].x*scale, 10 + sheets[page].planks[1].y*scale, sheets[page].planks[1].length*scale, sheets[page].planks[1].width*scale);
+       
+        drawList(sheets[0]);
+        
         resize();
         $(window).on("resize", function(){                      
             resize();
         });
+        
+        
   });
 JS;
 
 
 $this->registerCSS($canvasAdaptiveCSS);
 
+$this->registerJS($sheetObjectJS, \yii\web\View::POS_END);
 $this->registerJS($canvasAdaptiveJS, \yii\web\View::POS_END)
 ?>
 <div class="order-index">
@@ -56,7 +111,8 @@ $this->registerJS($canvasAdaptiveJS, \yii\web\View::POS_END)
         </div>
         <div class="col-sm-4 text-center">
             <label aria-label="Лист:">Лист: </label>
-            <input aria-label="Лист" type="text" size="4"/>
+            <input id="page" aria-label="Лист" type="text" size="4" value="0"/>
+            <input id="page-hidden" aria-label="Лист" type="hidden" value="0"/>
             <button id="go-to-list">Перейти</button>
         </div>
         <div class="col-sm-4 text-right">
