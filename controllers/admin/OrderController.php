@@ -6,6 +6,7 @@ use Yii;
 use app\models\Order;
 use app\models\OrderSearch;
 use app\controllers\BaseController;
+use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -170,7 +171,7 @@ class OrderController extends BaseController
         }
 
         return $this->render('cut-orders', [
-            'sheets' => $sheets
+            'sheets' => Json::encode($sheets)
         ]);
     }
 }

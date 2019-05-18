@@ -26,10 +26,10 @@ class Sheet
     private static $sheetUsed;
 
     // array of app\models\logic\Plank
-    private $planks = [];
+    public $planks = [];
 
     // part remained of sheet after a cut
-    private $offcut = [];
+    public $offcut = [];
 
     // wastes remained of sheet after a cut
     private $waste = [];

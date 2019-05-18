@@ -17,6 +17,7 @@ $canvasAdaptiveCSS = <<<CSS
 }
 CSS;
 
+$sheetObjectJS = '';
 
 $canvasAdaptiveJS = <<<JS
     function resize(){   
@@ -25,11 +26,12 @@ $canvasAdaptiveJS = <<<JS
   }
   $(document).ready(function(){
         var canvas = document.getElementById('responsive-canvas');
-        // var heightRatio = 1.5;
-        // canvas.height = canvas.width * heightRatio;
-        
 	    ctx = canvas.getContext('2d');
-        ctx.fillRect(0, 0, canvas.width, canvas.height)
+	    ctx.fillStyle = "silver";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.fillStyle = "silver";
+        ctx.fillRect(50, 50, canvas.width, canvas.height);
         resize();
         $(window).on("resize", function(){                      
             resize();
@@ -49,15 +51,15 @@ $this->registerJS($canvasAdaptiveJS, \yii\web\View::POS_END)
         <p></p>
     </div>
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-sm-4">
             <button id="prev-list">&laquoПредыдущий</button>
         </div>
-        <div class="col-md-4 text-center">
+        <div class="col-sm-4 text-center">
             <label aria-label="Лист:">Лист: </label>
             <input aria-label="Лист" type="text" size="4"/>
             <button id="go-to-list">Перейти</button>
         </div>
-        <div class="col-md-4 text-right">
+        <div class="col-sm-4 text-right">
             <button id="next-list">Следующий&raquo</button>
         </div>
         <br>
