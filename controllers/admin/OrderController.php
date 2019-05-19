@@ -160,6 +160,10 @@ class OrderController extends BaseController
             }
         }
 
+        usort($cuttingList, function ($a, $b) {
+            return $b->width > $a->width;
+        });
+
         $sheets = [];
         for ($i = 0; $i < $providerStockItem->count; $i++) {
             $sheets[] = new Sheet($providerStockItem->length_mm, $providerStockItem->width_mm);

@@ -9,6 +9,7 @@
 use yii\helpers\Html;
 
 $this->title = 'Распил на заказы';
+$this->params['breadcrumbs'][] = ['label' => 'Заказы', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $canvasAdaptiveCSS = <<<CSS

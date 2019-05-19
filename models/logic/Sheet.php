@@ -97,10 +97,6 @@ class Sheet
         foreach ($planks as $key => $plank) {
             if ($this->tryToPutThePlank($plank)) {
                 unset($planks[$key]);
-//                echo 'Plank: ';
-//                echo '<pre>';
-//                print_r($plank);
-//                echo '</pre>';
             }
         }
 
