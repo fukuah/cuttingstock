@@ -19,19 +19,27 @@ CSS;
 
 $sheetObjectJS = "
     var json = '$sheets';
+    function getSheets(){
+        return JSON.parse('$sheets');
+    }
+    
     var sheets = JSON.parse('$sheets');
 ";
 
 $canvasAdaptiveJS = <<<JS
   $(document).ready(function(){
-        // var page = 0; 
+        var canvas = document.getElementById('responsive-canvas');
+	    ctx = canvas.getContext('2d');
         
         function resize(){   
             var canvas = $("#responsive-canvas");
             canvas.outerHeight($(window).height() - canvas.offset().top - Math.abs(canvas.outerHeight(true) - canvas.outerHeight()));
         }
     
-        function drawList(sheet){
+        function drawList(ctx, sheet){
+            ctx.fillStyle = "BurlyWood";
+            ctx.fillRect(10, 10, sheets[0].length*scale, sheets[0].width*scale);
+            
             sheet.planks.forEach(function(plank) {
                 ctx.fillStyle = "LightCyan";
                 ctx.fillRect(10 + plank.x*scale, 10 + plank.y*scale, plank.length*scale, plank.width*scale);
@@ -40,37 +48,36 @@ $canvasAdaptiveJS = <<<JS
             });
         } 
       
-        $('#next-list').click(function(sheets) {
+        $('#next-list').click({sheets: sheets, ctx: ctx}, function() {
             var pageInput = $('#page-hidden');
             var pageTextInput = $('#page');
-            var page = pageInput.val(); 
-            console.log(page);
+            var page =  parseInt(pageInput.val());
             if (page + 1 < sheets.length) {
-                drawList(sheets[page + 1]);
+                drawList(ctx, sheets[page + 1]);
                 pageInput.val(page + 1);
                 pageTextInput.val(page + 1)
             }
         });
         
-        $('#next-prev').on('click', function() {
-            
+        $('#prev-list').click({sheets: sheets, ctx: ctx}, function() {
+            var pageInput = $('#page-hidden');
+            var pageTextInput = $('#page');
+            var page =  parseInt(pageInput.val());
+            if (page - 1 >= 0) {
+                drawList(ctx, sheets[page - 1]);
+                pageInput.val(page - 1);
+                pageTextInput.val(page - 1)
+            }
         });
-      
-        var canvas = document.getElementById('responsive-canvas');
         
-	    ctx = canvas.getContext('2d');
 	    ctx.lineWidth = 0.3;
-	    
-	    ctx.fillStyle = "Ivory";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
         
         var primaryX = 10;
         var primaryY = 10;
         
         var scale = 1/18;
-        
-        ctx.fillStyle = "BurlyWood";
-        ctx.fillRect(10, 10, sheets[0].length*scale, sheets[0].width*scale);
+        ctx.fillStyle = "Ivory";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
         
         // ctx.fillStyle = "LightCyan";
         // ctx.fillRect(10, 10, sheets[page].planks[0].length*scale, sheets[page].planks[0].width*scale);
@@ -82,7 +89,7 @@ $canvasAdaptiveJS = <<<JS
         // ctx.fillStyle = "Black";
         // ctx.strokeRect(10 + sheets[page].planks[1].x*scale, 10 + sheets[page].planks[1].y*scale, sheets[page].planks[1].length*scale, sheets[page].planks[1].width*scale);
        
-        drawList(sheets[0]);
+        drawList(ctx, sheets[0]);
         
         resize();
         $(window).on("resize", function(){                      
