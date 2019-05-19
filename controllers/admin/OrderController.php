@@ -156,7 +156,7 @@ class OrderController extends BaseController
         $cuttingList = [];
         foreach ($allOrderStocks as $orderStock) {
             for ($i = 0; $i < $orderStock->count; $i++) {
-                $cuttingList[] = new Plank($orderStock->length_mm, $orderStock->width_mm);
+                $cuttingList[] = new Plank($orderStock->length_mm, $orderStock->width_mm, $orderStock->order_id);
             }
         }
 

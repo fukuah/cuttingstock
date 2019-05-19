@@ -12,18 +12,8 @@ $this->title = 'Распил на заказы';
 $this->params['breadcrumbs'][] = ['label' => 'Заказы', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
-$canvasAdaptiveCSS = <<<CSS
-#responsive-canvas{
-    width: 100%;
-}
-CSS;
-
 $sheetObjectJS = "
     var json = '$sheets';
-    function getSheets(){
-        return JSON.parse('$sheets');
-    }
-    
     var sheets = JSON.parse('$sheets');
 ";
 
@@ -32,20 +22,23 @@ $canvasAdaptiveJS = <<<JS
         var canvas = document.getElementById('responsive-canvas');
 	    ctx = canvas.getContext('2d');
         
-        function resize(){   
-            var canvas = $("#responsive-canvas");
-            canvas.outerHeight($(window).height() - canvas.offset().top - Math.abs(canvas.outerHeight(true) - canvas.outerHeight()));
-        }
+        // function resize(){   
+        //     var canvas = $("#responsive-canvas");
+        //     canvas.outerHeight($(window).height() - canvas.offset().top - Math.abs(canvas.outerHeight(true) - canvas.outerHeight()));
+        // }
     
         function drawList(ctx, sheet){
             ctx.fillStyle = "BurlyWood";
             ctx.fillRect(10, 10, sheets[0].length*scale, sheets[0].width*scale);
+            
             
             sheet.planks.forEach(function(plank) {
                 ctx.fillStyle = "LightCyan";
                 ctx.fillRect(10 + plank.x*scale, 10 + plank.y*scale, plank.length*scale, plank.width*scale);
                 ctx.fillStyle = "Black";
                 ctx.strokeRect(10 + plank.x*scale, 10 + plank.y*scale, plank.length*scale, plank.width*scale);
+                
+                ctx.fillText("#" + plank.orderID + " " + parseInt(plank.length) + "x" + parseInt(plank.width), 10 + plank.x*scale + plank.length*scale/2 - plank.length*scale/3, 10 + plank.y*scale + plank.width*scale/2);
             });
         } 
       
@@ -71,31 +64,22 @@ $canvasAdaptiveJS = <<<JS
             }
         });
         
-	    ctx.lineWidth = 0.3;
+	    ctx.lineWidth = 1;
+	    ctx.font = "12px Arial";
         
         var primaryX = 10;
         var primaryY = 10;
         
-        var scale = 1/18;
+        var scale = 1/4.5;
         ctx.fillStyle = "Ivory";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        // ctx.fillStyle = "LightCyan";
-        // ctx.fillRect(10, 10, sheets[page].planks[0].length*scale, sheets[page].planks[0].width*scale);
-        // ctx.fillStyle = "Black";
-        // ctx.strokeRect(10, 10, sheets[page].planks[0].length*scale, sheets[page].planks[0].width*scale);
-        //
-        // ctx.fillStyle = "LightCyan";
-        // ctx.fillRect(10 + sheets[page].planks[1].x*scale, 10 + sheets[page].planks[1].y*scale, sheets[page].planks[1].length*scale, sheets[page].planks[1].width*scale);
-        // ctx.fillStyle = "Black";
-        // ctx.strokeRect(10 + sheets[page].planks[1].x*scale, 10 + sheets[page].planks[1].y*scale, sheets[page].planks[1].length*scale, sheets[page].planks[1].width*scale);
-       
         drawList(ctx, sheets[0]);
         
         resize();
-        $(window).on("resize", function(){                      
-            resize();
-        });
+        // $(window).on("resize", function(){                      
+        //     resize();
+        // });
         
         
   });
@@ -128,7 +112,7 @@ $this->registerJS($canvasAdaptiveJS, \yii\web\View::POS_END)
         </div>
         <br>
         <div id="'outer" class="col-md-12">
-            <canvas id='responsive-canvas'></canvas>
+            <canvas width="1140" height="700" id='responsive-canvas'></canvas>
         </div>
     </div>
 
