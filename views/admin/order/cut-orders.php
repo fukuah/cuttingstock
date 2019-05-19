@@ -38,8 +38,28 @@ $canvasAdaptiveJS = <<<JS
                 ctx.fillStyle = "Black";
                 ctx.strokeRect(10 + plank.x*scale, 10 + plank.y*scale, plank.length*scale, plank.width*scale);
                 
+                var rightUpX = parseInt(plank.x) + parseInt(plank.length);
+                var rightUpY = parseInt(plank.y) + parseInt(plank.width);
                 ctx.fillText("#" + plank.orderID + " " + parseInt(plank.length) + "x" + parseInt(plank.width), 10 + plank.x*scale + plank.length*scale/2 - plank.length*scale/3, 10 + plank.y*scale + plank.width*scale/2);
+                ctx.fillText("x: " + rightUpX + "  y: " + rightUpY, 10 + plank.x*scale + plank.length*scale/2 - plank.length*scale/3, 10 + plank.y*scale + plank.width*scale/2 + 13);
             });
+            
+            var offcuts = sheet.offcuts;
+            Object.keys(offcuts).forEach(function(key) {
+                var LEFT_DOWN = 0, RIGHT_UP = 1, X = 0, Y = 1,
+                    width = offcuts[key][RIGHT_UP][Y] - offcuts[key][LEFT_DOWN][Y], 
+                    length = offcuts[key][RIGHT_UP][X] - offcuts[key][LEFT_DOWN][X];
+                
+                console.log(offcuts[key]);
+                ctx.fillStyle = "SandyBrown";
+                ctx.fillRect(10 + offcuts[key][LEFT_DOWN][X]*scale, 10 + offcuts[key][LEFT_DOWN][Y]*scale, length*scale, width*scale);
+                ctx.fillStyle = "Black";
+                ctx.strokeRect(10 + offcuts[key][LEFT_DOWN][X]*scale, 10 + offcuts[key][LEFT_DOWN][Y]*scale, length*scale, width*scale);
+            });
+            // console.log(sheet.offcuts);
+            // sheet.offcuts.forEach(function(offcut) {
+            //        
+            // });
         } 
       
         $('#next-list').click({sheets: sheets, ctx: ctx}, function() {
@@ -65,7 +85,7 @@ $canvasAdaptiveJS = <<<JS
         });
         
 	    ctx.lineWidth = 1;
-	    ctx.font = "12px Arial";
+	    ctx.font = "10px Arial";
         
         var primaryX = 10;
         var primaryY = 10;
@@ -76,7 +96,7 @@ $canvasAdaptiveJS = <<<JS
         
         drawList(ctx, sheets[0]);
         
-        resize();
+        // resize();
         // $(window).on("resize", function(){                      
         //     resize();
         // });
@@ -112,12 +132,15 @@ $this->registerJS($canvasAdaptiveJS, \yii\web\View::POS_END)
         </div>
         <br>
         <div id="'outer" class="col-md-12">
-            <canvas width="1140" height="700" id='responsive-canvas'></canvas>
+            <canvas width="1140" height="600" id='responsive-canvas'></canvas>
         </div>
     </div>
 
     <pre>
         <?php print_r($sheets); ?>
+    </pre>
+    <pre>
+        <?php print_r($sheetsRaw); ?>
     </pre>
 
 </div>

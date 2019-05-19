@@ -29,7 +29,7 @@ class Sheet
     public $planks = [];
 
     // part remained of sheet after a cut
-    public $offcut = [];
+    public $offcuts = [];
 
     // wastes remained of sheet after a cut
     private $waste = [];
@@ -42,7 +42,7 @@ class Sheet
         $this->length = $length;
         $this->width = $width;
 
-        $this->offcut = [0 => [self::DOWN_LEFT => [0, 0], self::UP_RIGHT => [$length, $width]]];
+        $this->offcuts = [0 => [self::DOWN_LEFT => [0, 0], self::UP_RIGHT => [$length, $width]]];
     }
 
 
@@ -72,9 +72,9 @@ class Sheet
     /**
      * @return array
      */
-    public function getOffcut()
+    public function getOffcuts()
     {
-        return $this->offcut;
+        return $this->offcuts;
     }
 
     /**
@@ -111,7 +111,7 @@ class Sheet
      */
     private function tryToPutThePlank(Plank $plank)
     {
-        foreach ($this->offcut as $key => $offcut) {
+        foreach ($this->offcuts as $key => $offcut) {
             $offcutLength = $offcut[self::UP_RIGHT][self::X] - $offcut[self::DOWN_LEFT][self::X];
             $offcutWidth = $offcut[self::UP_RIGHT][self::Y] - $offcut[self::DOWN_LEFT][self::Y];
 
@@ -123,7 +123,7 @@ class Sheet
                     $plank->y = $offcut[self::DOWN_LEFT][self::Y];
                     $this->planks[] = $plank;
 
-                    $this->offcut[] = [
+                    $this->offcuts[] = [
                         self::DOWN_LEFT => [
                             $plank->x,
                             $plank->y + $plank->width
@@ -134,7 +134,7 @@ class Sheet
                         ]
                     ];
 
-                    $this->offcut[] = [
+                    $this->offcuts[] = [
                         self::DOWN_LEFT => [
                             $plank->x + $plank->length,
                             $plank->y
@@ -145,7 +145,7 @@ class Sheet
                         ]
                     ];
 
-                    unset($this->offcut[$key]);
+                    unset($this->offcuts[$key]);
                     $this->cleanUpCutoff();
                     return true;
                 }
@@ -162,23 +162,47 @@ class Sheet
 
     private function cleanUpCutoff()
     {
-        foreach ($this->offcut as $key => $offcut) {
-            $offcutLength = $offcut[self::UP_RIGHT][self::X] - $offcut[self::DOWN_LEFT][self::X];
-            $offcutWidth = $offcut[self::UP_RIGHT][self::Y] - $offcut[self::DOWN_LEFT][self::Y];
+        usort($this->offcuts, function ($a, $b) {
+            return $b[self::DOWN_LEFT][self::Y] > $a[self::DOWN_LEFT][self::Y];
+        });
+        usort($this->offcuts, function ($a, $b) {
+            return $b[self::DOWN_LEFT][self::X] > $a[self::DOWN_LEFT][self::X];
+        });
+
+        foreach ($this->offcuts as $key => $currentOffcut) {
+            $offcutLength = $currentOffcut[self::UP_RIGHT][self::X] - $currentOffcut[self::DOWN_LEFT][self::X];
+            $offcutWidth = $currentOffcut[self::UP_RIGHT][self::Y] - $currentOffcut[self::DOWN_LEFT][self::Y];
 
             // Delete wastes
             if ($offcutLength < self::$wasteConstraintMM || $offcutWidth < self::$wasteConstraintMM) {
-                unset($this->offcut[$key]);
+                unset($this->offcuts[$key]);
             }
 
             // Unite offcuts if it is possible
-//            if (isset($previousOffcut)) {
-//                if () {
+//            if (isset($previousOffcut) && isset($previousKey)) {
+//                if (
+//                    $previousOffcut[self::DOWN_LEFT][self::X] = $currentOffcut[self::DOWN_LEFT][self::X]
+//                    && $previousOffcut[self::UP_RIGHT][self::Y] = $currentOffcut[self::DOWN_LEFT][self::Y]
+//                    && $previousOffcut[self::UP_RIGHT][self::X] = $currentOffcut[self::UP_RIGHT][self::X]
+//                ) {
+//                    $this->offcuts[] = [
+//                        self::DOWN_LEFT => [
+//                            $previousOffcut[self::DOWN_LEFT][self::X],
+//                            $previousOffcut[self::DOWN_LEFT][self::Y]
+//                        ],
+//                        self::UP_RIGHT => [
+//                            $currentOffcut[self::UP_RIGHT][self::X],
+//                            $currentOffcut[self::UP_RIGHT][self::Y]
+//                        ]
+//                    ];
 //
+//                    unset($this->offcuts[$key]);
+//                    unset($this->offcuts[$previousKey]);
 //                }
 //            }
-//
-//            $previousOffcut = $offcut;
+
+            $previousOffcut = $currentOffcut;
+            $previousKey = $key;
         }
     }
 }

@@ -175,7 +175,8 @@ class OrderController extends BaseController
         }
 
         return $this->render('cut-orders', [
-            'sheets' => Json::encode($sheets)
+            'sheets' => Json::encode($sheets),
+            'sheetsRaw' => $sheets
         ]);
     }
 }
