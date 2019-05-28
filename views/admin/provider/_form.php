@@ -11,26 +11,16 @@ use yii\widgets\ActiveForm;
 <div class="provider-form">
 
     <?php $form = ActiveForm::begin(); ?>
+
     <div class="row">
-        <div class="col-md-3"><?= $form->field($model, 'email')->textInput(['maxlength' => true]) ?></div>
+        <div class="col-md-3"><?= $form->field($model, 'material_name')->textInput(['maxlength' => true]) ?></div>
+        <div class="col-md-3"><?= $form->field($model, 'count')->textInput(['maxlength' => true]) ?></div>
+        <div class="col-md-3"><?= $form->field($model, 'price_100mm2')->textInput(['maxlength' => true]) ?></div>
+        <div class="col-md-3"><?= $form->field($model, 'price_100mm2')->textInput(['maxlength' => true]) ?></div>
+        <div class="col-md-3"><?= $form->field($model, 'length_mm')->textInput(['maxlength' => true]) ?></div>
+        <div class="col-md-3"><?= $form->field($model, 'width_mm')->textInput(['maxlength' => true]) ?></div>
 
-        <div class="col-md-3"><?= $form->field($model, 'first_name')->textInput(['maxlength' => true]) ?></div>
-
-        <div class="col-md-3"><?= $form->field($model, 'middle_name')->textInput(['maxlength' => true]) ?></div>
-
-        <div class="col-md-3"><?= $form->field($model, 'last_name')->textInput(['maxlength' => true]) ?></div>
     </div>
-    <div class="row">
-        <div class="col-md-6"><?= $form->field($model, 'price_cut')->textInput(['maxlength' => true]) ?></div>
-
-        <div class="col-md-6"><?= $form->field($model, 'price_100mm2')->textInput(['maxlength' => true]) ?></div>
-    </div>
-
-    <?= $form->field($model, 'address')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'company_name')->textInput(['maxlength' => true]) ?>
-
-    <?= $form->field($model, 'company_description')->textarea(['rows' => 6]) ?>
 
     <div class="form-group">
         <?= Html::submitButton('Сохранить', ['class' => 'btn btn-success']) ?>

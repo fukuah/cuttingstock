@@ -6,8 +6,8 @@ use yii\widgets\DetailView;
 /* @var $this yii\web\View */
 /* @var $model app\models\Material */
 
-$this->title = $model->company_name;
-$this->params['breadcrumbs'][] = ['label' => 'Поставщики', 'url' => ['index']];
+$this->title = $model->material_name;
+$this->params['breadcrumbs'][] = ['label' => 'Материалы', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
@@ -29,14 +29,12 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'email:email',
-            'first_name',
-            'middle_name',
-            'last_name',
+            'material_name',
+            'length_mm',
+            'width_mm',
+            'count',
             'price_cut',
             'price_100mm2',
-            'address',
-            'company_name',
             [
                 'attribute' => 'id',
                 'format' => 'html',
@@ -49,7 +47,6 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $html;
                 }
             ],
-            'company_description:ntext',
         ],
     ]) ?>
 

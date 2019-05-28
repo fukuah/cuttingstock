@@ -61,15 +61,13 @@ class MaterialSearch extends Material
             'id' => $this->id,
             'price_cut' => $this->price_cut,
             'price_100mm2' => $this->price_100mm2,
+            'count' => $this->count,
+            'length_mm' => $this->length_mm,
+            'width_mm' => $this->width_mm,
         ]);
 
-        $query->andFilterWhere(['like', 'email', $this->email])
-            ->andFilterWhere(['like', 'first_name', $this->first_name])
-            ->andFilterWhere(['like', 'middle_name', $this->middle_name])
-            ->andFilterWhere(['like', 'last_name', $this->last_name])
-            ->andFilterWhere(['like', 'address', $this->address])
-            ->andFilterWhere(['like', 'company_name', $this->company_name])
-            ->andFilterWhere(['like', 'company_description', $this->company_description]);
+        $query->andFilterWhere(['like', 'material_name', $this->material_name]);
+
 
         return $dataProvider;
     }

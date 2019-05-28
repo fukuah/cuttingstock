@@ -39,7 +39,7 @@ AppAsset::register($this);
     $navItems = [
         ['label' => 'Главная', 'url' => ['/site/index']],
         ['label' => 'О нас', 'url' => ['/site/about']],
-        ['label' => 'Вы поставщик?', 'url' => ['/site/contact']],
+//        ['label' => 'Вы поставщик?', 'url' => ['/site/contact']],
         Yii::$app->user->isGuest ? (
         ['label' => 'Войти', 'url' => ['/user/login']]
         ) : (
@@ -56,7 +56,7 @@ AppAsset::register($this);
 
     if (Yii::$app->controller->isAdmin()) {
         $navItems = \yii\helpers\ArrayHelper::merge([
-            ['label' => 'Поставщики', 'url' => ['/admin/provider']],
+            ['label' => 'Материалы', 'url' => ['/admin/provider']],
             ['label' => 'Заказы', 'url' => ['/admin/order']]
         ], $navItems);
     }

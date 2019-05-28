@@ -15,13 +15,13 @@ use yii\widgets\ActiveForm;
         'method' => 'get',
     ]); ?>
 
-    <?= $form->field($model, 'email') ?>
+    <?= $form->field($model, 'material_name') ?>
 
-    <?= $form->field($model, 'first_name') ?>
+    <?= $form->field($model, 'length_mm') ?>
 
-    <?= $form->field($model, 'middle_name') ?>
+    <?= $form->field($model, 'width_mm') ?>
 
-    <?= $form->field($model, 'last_name') ?>
+    <?= $form->field($model, 'count') ?>
 
     <?php // echo $form->field($model, 'price_cut') ?>
 

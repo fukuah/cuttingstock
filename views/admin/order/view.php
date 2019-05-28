@@ -23,9 +23,9 @@ $this->params['breadcrumbs'][] = $this->title;
                 }
             ],
             [
-                'attribute' => 'provider_id',
+                'attribute' => 'material_id',
                 'value' => function ($model) {
-                    return $model->provider->company_name;
+                    return $model->material->material_name;
                 }
             ],
             'status',

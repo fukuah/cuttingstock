@@ -7,7 +7,7 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\MaterialSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Providers';
+$this->title = 'Материалы';
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="provider-index">
@@ -15,7 +15,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <h1><?= Html::encode($this->title) ?></h1>
 
     <p>
-        <?= Html::a('Create Material', ['create'], ['class' => 'btn btn-success']) ?>
+        <?= Html::a('Внести новый материал', ['create'], ['class' => 'btn btn-success']) ?>
     </p>
 
     <?php // echo $this->render('_search', ['model' => $searchModel]); ?>
@@ -25,16 +25,12 @@ $this->params['breadcrumbs'][] = $this->title;
         'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
-            'company_name',
-            'email:email',
-            'first_name',
-            'middle_name',
-            'last_name',
-            //            'price_cut',
-            //            'price_100mm2',
-            'address',
-            //'company_description:ntext',
-
+            'material_name',
+            'length_mm',
+            'width_mm',
+            'count',
+            'price_cut',
+            'price_100mm2',
             ['class' => 'yii\grid\ActionColumn'],
         ],
     ]); ?>

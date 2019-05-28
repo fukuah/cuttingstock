@@ -5,9 +5,9 @@ use yii\helpers\Html;
 /* @var $this yii\web\View */
 /* @var $model app\models\Material */
 
-$this->title = 'Поставщик: ' . $model->company_name;
-$this->params['breadcrumbs'][] = ['label' => 'Поставщики', 'url' => ['index']];
-$this->params['breadcrumbs'][] = ['label' => $model->company_name, 'url' => ['view', 'id' => $model->id]];
+$this->title = 'Поставщик: ' . $model->material_name;
+$this->params['breadcrumbs'][] = ['label' => 'Материалы', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => $model->material_name, 'url' => ['view', 'id' => $model->id]];
 $this->params['breadcrumbs'][] = 'Редактировать';
 ?>
 <div class="provider-update">

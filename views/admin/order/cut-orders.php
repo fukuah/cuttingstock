@@ -8,6 +8,7 @@
 
 use yii\helpers\Html;
 use yii\helpers\Json;
+use yii\helpers\Url;
 
 $this->title = 'Распил на заказы';
 $this->params['breadcrumbs'][] = ['label' => 'Заказы', 'url' => ['index']];
@@ -102,7 +103,7 @@ $canvasAdaptiveJS = <<<JS
         var primaryX = 10;
         var primaryY = 10;
         
-        var scale = 1/4.5;
+        var scale = 1/8.5;
         ctx.fillStyle = "Ivory";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
@@ -127,9 +128,6 @@ $this->registerJS($canvasAdaptiveJS, \yii\web\View::POS_END)
     <h1><?= Html::encode($this->title) ?></h1>
     <div>
         <p></p>
-        <pre>
-        <?php print_r($materials); ?>
-    </pre>
     </div>
     <div class="row">
         <div class="col-sm-3">
@@ -154,11 +152,11 @@ $this->registerJS($canvasAdaptiveJS, \yii\web\View::POS_END)
         </div>
     </div>
 
-    <pre>
-        <?php print_r($sheets); ?>
-    </pre>
-    <pre>
-        <?php print_r($sheetsRaw); ?>
-    </pre>
-
+    <div class="text-right">
+        <?= Html::beginForm(Url::to(['/admin/order/cut'])) ?>
+        <?= Html::hiddenInput('orders', Json::encode($orders)) ?>
+        <?= Html::hiddenInput('sheetsUsed', Json::encode($sheetsUsed)) ?>
+        <?= Html::submitButton('Послать на распил', ['class' => 'btn btn-warning']) ?>
+        <?= Html::endForm(); ?>
+    </div>
 </div>

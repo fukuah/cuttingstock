@@ -153,18 +153,27 @@ class OrderController extends BaseController
 
         $cuttingLists = [];
         $materialIds = [];
+        $orderIds = [];
         foreach ($allOrderStocks as $orderStock) {
-            if (!isset($cuttingList[$orderStock->order->material_id])) {
-                $cuttingLists[$orderStock->order->material_id] = [];
-                for ($i = 0; $i < $orderStock->count; $i++) {
-                    $cuttingLists[$orderStock->order->material_id][] = new Plank($orderStock->length_mm, $orderStock->width_mm, $orderStock->order_id, $orderStock->order->material_id);
-                }
-                $materialIds[] = $orderStock->order->material_id;
+            for ($i = 0; $i < $orderStock->count; $i++) {
+                $cuttingLists[$orderStock->order->material_id][] = new Plank($orderStock->length_mm, $orderStock->width_mm, $orderStock->order_id, $orderStock->order->material_id);
             }
+            $materialIds[] = $orderStock->order->material_id;
+            $orderIds[] = $orderStock->order->id;
+
         }
-        array_unique($materialIds);
+        $materialIds = array_unique($materialIds);
+        $orderIds = array_unique($orderIds);
         $materialsAQ = Material::find()->where(['id' => $materialIds]);
         $dropDownMaterials = ArrayHelper::map($materialsAQ->all(), 'id', 'material_name');
+
+
+//        echo '<pre>';
+//        print_r(array_unique($materialIds));
+//        echo "\n";
+//        print_r($cuttingLists);
+//        echo '</pre>';
+//        exit;
 
         $sheets = [];
         foreach ($materialIds as $materiaId) {
@@ -185,10 +194,51 @@ class OrderController extends BaseController
             }
         }
 
+        $sheetsUsed = [];
+        $offcuts = [];
+        foreach ($sheets as $material => $msheets) {
+            $sheetsUsed[$material] = count($msheets);
+            foreach ($msheets as $msheet) {
+                $offcuts[] = $msheet->offcuts;
+            }
+
+        }
+
         return $this->render('cut-orders', [
             'sheets' => $sheets,
             'sheetsRaw' => $sheets,
-            'materials' => $dropDownMaterials
+            'materials' => $dropDownMaterials,
+            'orders' => $orderIds,
+            'sheetsUsed' => $sheetsUsed,
         ]);
+    }
+
+    public function actionCut()
+    {
+        $jsonOrders = Yii::$app->request->post('orders');
+        $jsonSheetsUsed = Yii::$app->request->post('sheetsUsed');
+
+        $orderIds = Json::decode($jsonOrders);
+        $sheetsUsed = Json::decode($jsonSheetsUsed);
+
+
+        $orders = Order::findAll(['id' => $orderIds]);
+        foreach ($orders as $order) {
+            $order->status = 1;
+            $order->served_at = date("Y-m-d H:i:s");
+            if (!$order->save()) {
+                print_r($order->errors);
+            }
+        }
+
+        $materials = Material::findAll(['id' => array_keys($sheetsUsed)]);
+        foreach ($materials as $material) {
+            $material->count -= $sheetsUsed[$material->id];
+            if (!$material->save()) {
+                print_r($material->errors);
+            }
+        }
+
+        return $this->redirect('index');
     }
 }
