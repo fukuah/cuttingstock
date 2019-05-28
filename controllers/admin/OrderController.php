@@ -2,10 +2,12 @@
 
 namespace app\controllers\admin;
 
+use app\models\Material;
 use Yii;
 use app\models\Order;
 use app\models\OrderSearch;
 use app\controllers\BaseController;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Json;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -13,7 +15,7 @@ use yii\filters\AccessControl;
 use app\models\logic\Plank;
 use app\models\logic\Sheet;
 use app\models\OrderStock;
-use app\models\ProviderStock;
+use app\models\MaterialStock;
 
 /**
  * OrderController implements the CRUD actions for Order model.
@@ -147,36 +149,46 @@ class OrderController extends BaseController
 
         $allOrderIds = Yii::$app->request->post('selection');
 
-        $providerStock = ProviderStock::findAll(['provider_id' => [1, 2]]);
-        $providerStockItem = $providerStock[1];
-
-
         $allOrderStocks = OrderStock::findAll(['order_id' => $allOrderIds]);
 
-        $cuttingList = [];
+        $cuttingLists = [];
+        $materialIds = [];
         foreach ($allOrderStocks as $orderStock) {
-            for ($i = 0; $i < $orderStock->count; $i++) {
-                $cuttingList[] = new Plank($orderStock->length_mm, $orderStock->width_mm, $orderStock->order_id);
+            if (!isset($cuttingList[$orderStock->order->material_id])) {
+                $cuttingLists[$orderStock->order->material_id] = [];
+                for ($i = 0; $i < $orderStock->count; $i++) {
+                    $cuttingLists[$orderStock->order->material_id][] = new Plank($orderStock->length_mm, $orderStock->width_mm, $orderStock->order_id, $orderStock->order->material_id);
+                }
+                $materialIds[] = $orderStock->order->material_id;
             }
         }
-
-        usort($cuttingList, function ($a, $b) {
-            return $b->width > $a->width;
-        });
+        array_unique($materialIds);
+        $materialsAQ = Material::find()->where(['id' => $materialIds]);
+        $dropDownMaterials = ArrayHelper::map($materialsAQ->all(), 'id', 'material_name');
 
         $sheets = [];
-        for ($i = 0; $i < $providerStockItem->count; $i++) {
-            $sheets[] = new Sheet($providerStockItem->length_mm, $providerStockItem->width_mm);
-            $cuttingList = $sheets[$i]->fill($cuttingList);
-            if (count($cuttingList) == 0) {
-                break;
-            }
+        foreach ($materialIds as $materiaId) {
 
+            usort($cuttingLists[$materiaId], function ($a, $b) {
+                return $b->width > $a->width;
+            });
+
+            $material = $materialsAQ->where(['id' => $materiaId])->one();
+            $sheets[$materiaId] = [];
+            for ($i = 0; $i < $material->count && count($cuttingLists[$materiaId]) > 0; $i++) {
+
+                $sheets[$materiaId][] = new Sheet($material->length_mm, $material->width_mm, $material->material_name);
+                $cuttingLists[$materiaId] = $sheets[$materiaId][$i]->fill($cuttingLists[$materiaId]);
+            }
+            if (!empty($cuttingLists[$materiaId])) {
+                die('Нехватает листов: ' . $material->material_name);
+            }
         }
 
         return $this->render('cut-orders', [
-            'sheets' => Json::encode($sheets),
-            'sheetsRaw' => $sheets
+            'sheets' => $sheets,
+            'sheetsRaw' => $sheets,
+            'materials' => $dropDownMaterials
         ]);
     }
 }

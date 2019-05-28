@@ -7,15 +7,24 @@
  */
 
 use yii\helpers\Html;
+use yii\helpers\Json;
 
 $this->title = 'Распил на заказы';
 $this->params['breadcrumbs'][] = ['label' => 'Заказы', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 
 $sheetObjectJS = "
-    var json = '$sheets';
-    var sheets = JSON.parse('$sheets');
+    var json = '" . Json::encode(current($sheets)) . "'
+    var sheets = JSON.parse(json);
+    var json = '" . Json::encode($sheets) . "'
+    var allSheets = JSON.parse(json);
 ";
+
+$changeMaterialJS = <<<JS
+    
+JS;
+
+$this->registerJS($changeMaterialJS, \yii\web\View::POS_END);
 
 $canvasAdaptiveJS = <<<JS
   $(document).ready(function(){
@@ -44,22 +53,25 @@ $canvasAdaptiveJS = <<<JS
                 ctx.fillText("x: " + rightUpX + "  y: " + rightUpY, 10 + plank.x*scale + plank.length*scale/2 - plank.length*scale/3, 10 + plank.y*scale + plank.width*scale/2 + 13);
             });
             
-            var offcuts = sheet.offcuts;
+            var offcuts = sheet.offcuts, num = 1;
             Object.keys(offcuts).forEach(function(key) {
                 var LEFT_DOWN = 0, RIGHT_UP = 1, X = 0, Y = 1,
                     width = offcuts[key][RIGHT_UP][Y] - offcuts[key][LEFT_DOWN][Y], 
                     length = offcuts[key][RIGHT_UP][X] - offcuts[key][LEFT_DOWN][X];
-                
+               
                 console.log(offcuts[key]);
                 ctx.fillStyle = "SandyBrown";
                 ctx.fillRect(10 + offcuts[key][LEFT_DOWN][X]*scale, 10 + offcuts[key][LEFT_DOWN][Y]*scale, length*scale, width*scale);
                 ctx.fillStyle = "Black";
                 ctx.strokeRect(10 + offcuts[key][LEFT_DOWN][X]*scale, 10 + offcuts[key][LEFT_DOWN][Y]*scale, length*scale, width*scale);
+               
+                ctx.fillText(num, 10 +offcuts[key][LEFT_DOWN][X]*scale + length*scale/2 - length*scale/3, 10 +offcuts[key][LEFT_DOWN][Y]*scale + width*scale/2 + 13);
+                num++;
             });
-            // console.log(sheet.offcuts);
-            // sheet.offcuts.forEach(function(offcut) {
-            //        
-            // });
+            console.log(sheet.offcuts);
+            sheet.offcuts.forEach(function(offcut) {
+                   
+            });
         } 
       
         $('#next-list').click({sheets: sheets, ctx: ctx}, function() {
@@ -96,11 +108,10 @@ $canvasAdaptiveJS = <<<JS
         
         drawList(ctx, sheets[0]);
         
-        // resize();
-        // $(window).on("resize", function(){                      
-        //     resize();
-        // });
-        
+        $('#material').change({allSheets: allSheets, sheets: sheets, ctx: ctx}, function (){
+            sheets = allSheets[$('#material').val()];
+            drawList(ctx,  sheets[0])
+        });
         
   });
 JS;
@@ -116,18 +127,25 @@ $this->registerJS($canvasAdaptiveJS, \yii\web\View::POS_END)
     <h1><?= Html::encode($this->title) ?></h1>
     <div>
         <p></p>
+        <pre>
+        <?php print_r($materials); ?>
+    </pre>
     </div>
     <div class="row">
-        <div class="col-sm-4">
+        <div class="col-sm-3">
             <button id="prev-list">&laquoПредыдущий</button>
         </div>
-        <div class="col-sm-4 text-center">
+        <div class="col-sm-3 text-center">
             <label aria-label="Лист:">Лист: </label>
             <input id="page" aria-label="Лист" type="text" size="4" value="0"/>
             <input id="page-hidden" aria-label="Лист" type="hidden" value="0"/>
             <button id="go-to-list">Перейти</button>
         </div>
-        <div class="col-sm-4 text-right">
+        <div class="col-sm-3 text-center">
+            <label aria-label="Лист:">Материал: </label>
+            <?= Html::dropDownList('Материал', key(current($sheets)), $materials, ['id' => 'material']) ?>
+        </div>
+        <div class="col-sm-3 text-right">
             <button id="next-list">Следующий&raquo</button>
         </div>
         <br>

@@ -6,9 +6,9 @@ use yii\base\Model;
 use yii\data\ActiveDataProvider;
 
 /**
- * ProviderSearch represents the model behind the search form of `app\models\Provider`.
+ * MaterialSearch represents the model behind the search form of `app\models\Material`.
  */
-class ProviderSearch extends Provider
+class MaterialSearch extends Material
 {
     /**
      * {@inheritdoc}
@@ -17,8 +17,8 @@ class ProviderSearch extends Provider
     {
         return [
             [['id'], 'integer'],
-            [['email', 'first_name', 'middle_name', 'last_name', 'address', 'company_name', 'company_description'], 'safe'],
-            [['price_cut', 'price_100mm2'], 'number'],
+            [['material_name'], 'safe'],
+            [['price_cut', 'price_100mm2', 'count', 'length_mm', 'width_mm'], 'number'],
         ];
     }
 
@@ -40,7 +40,7 @@ class ProviderSearch extends Provider
      */
     public function search($params)
     {
-        $query = Provider::find();
+        $query = Material::find();
 
         // add conditions that should always apply here
 

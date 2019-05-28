@@ -105,7 +105,7 @@ class User extends ActiveRecord implements \yii\web\IdentityInterface
 
     public function getFioShort()
     {
-        return $this->first_name . ' ' . ($this->middle_name ?? '') . ' ' . substr($this->last_name, 0, 1) . '.';
+        return $this->first_name . ' ' . (isset($this->middle_name) ? $this->middle_name : '') . ' ' . substr($this->last_name, 0, 1) . '.';
     }
 
     public static function approveRegistration($hash)

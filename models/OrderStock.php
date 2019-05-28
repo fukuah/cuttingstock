@@ -11,6 +11,7 @@ namespace app\models;
  * @property string $length_mm
  * @property string $width_mm
  * @property string $count
+ * @property Order $order
  */
 class OrderStock extends \yii\db\ActiveRecord
 {
@@ -48,4 +49,10 @@ class OrderStock extends \yii\db\ActiveRecord
             'count' => 'В наличии',
         ];
     }
+
+    public function getOrder()
+    {
+        return $this->hasOne(Order::className(), ['id' => 'order_id']);
+    }
+
 }

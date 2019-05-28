@@ -8,7 +8,7 @@ namespace app\models;
  *
  * @property int $id
  * @property int $user_id
- * @property int $provider_id
+ * @property int $material_id
  * @property int $status
  * @property string $price
  * @property string $created_at
@@ -30,8 +30,8 @@ class Order extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['user_id', 'provider_id', 'price'], 'required'],
-            [['user_id', 'provider_id', 'status'], 'integer'],
+            [['user_id', 'material_id', 'price'], 'required'],
+            [['user_id', 'material_id', 'status'], 'integer'],
             [['price'], 'number'],
             [['created_at', 'served_at'], 'safe'],
         ];
@@ -45,7 +45,7 @@ class Order extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'user_id' => 'Пользователь',
-            'provider_id' => 'Поставщик',
+            'material_id' => 'Материал',
             'status' => 'Статус выполнения',
             'price' => 'Цена',
             'created_at' => 'Дата заказа',
@@ -58,9 +58,9 @@ class Order extends \yii\db\ActiveRecord
         return $this->hasOne(User::className(), ['id' => 'user_id']);
     }
 
-    public function getProvider()
+    public function getMaterial()
     {
-        return $this->hasOne(Provider::className(), ['id' => 'provider_id']);
+        return $this->hasOne(Material::className(), ['id' => 'material_id']);
     }
 
     public function getOrderStock()

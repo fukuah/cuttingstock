@@ -23,6 +23,6 @@ class BaseController extends Controller
     public function isAdmin()
     {
         $user = \Yii::$app->user->identity;
-        return $user->is_admin ?? false;
+        return isset($user->is_admin) ? $user->is_admin : false;
     }
 }

@@ -3,15 +3,15 @@
 namespace app\controllers\admin;
 
 use Yii;
-use app\models\Provider;
-use app\models\ProviderSearch;
+use app\models\Material;
+use app\models\MaterialSearch;
 use app\controllers\BaseController;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
 
 /**
- * AdminController implements the CRUD actions for Provider model.
+ * AdminController implements the CRUD actions for Material model.
  */
 class ProviderController extends BaseController
 {
@@ -56,7 +56,7 @@ class ProviderController extends BaseController
             throw new NotFoundHttpException('The requested page does not exist.');
         }
 
-        $searchModel = new ProviderSearch();
+        $searchModel = new MaterialSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -66,7 +66,7 @@ class ProviderController extends BaseController
     }
 
     /**
-     * Displays a single Provider model.
+     * Displays a single Material model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -83,13 +83,13 @@ class ProviderController extends BaseController
     }
 
     /**
-     * Creates a new Provider model.
+     * Creates a new Material model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Provider();
+        $model = new Material();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -101,7 +101,7 @@ class ProviderController extends BaseController
     }
 
     /**
-     * Updates an existing Provider model.
+     * Updates an existing Material model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -123,7 +123,7 @@ class ProviderController extends BaseController
 
     protected function findProvider($id)
     {
-        if (($model = Provider::findOne($id)) !== null) {
+        if (($model = Material::findOne($id)) !== null) {
             return $model;
         }
 

@@ -13,7 +13,7 @@ use yii\base\Model;
 
 class OrderForm extends Model
 {
-    public $providerId;
+    public $materialId;
     public $length;
     public $width;
     public $count = 1;
@@ -21,8 +21,8 @@ class OrderForm extends Model
     public function rules()
     {
         return [
-            [['providerId', 'length', 'width', 'count'], 'required'],
-            ['providerId', 'integer'],
+            [['materialId', 'length', 'width', 'count'], 'required'],
+            ['materialId', 'integer'],
             [['length', 'width'], 'integer', 'min' => 100, 'max' => 5000],
             ['count', 'integer', 'min' => 1, 'max' => 3000],
         ];
@@ -31,7 +31,7 @@ class OrderForm extends Model
     public function attributeLabels()
     {
         return [
-            'providerId' => 'Поставщик',
+            'materialId' => 'Материал',
             'length' => 'Длина',
             'width' => 'Ширина',
             'count' => 'Количество',
@@ -40,11 +40,11 @@ class OrderForm extends Model
 
     public function saveOrder()
     {
-        $provider = Provider::findOne(['id' => $this->providerId]);
+        $material = Material::findOne(['id' => $this->materialId]);
         $order = new Order();
-        $order->provider_id = $this->providerId;
+        $order->material_id = $this->materialId;
         $order->user_id = \Yii::$app->user->identity->id;
-        $order->price = $provider->price_100mm2 * $this->length * $this->width * $this->count / 100 + $provider->price_cut * $this->count * 2; //TODO
+        $order->price = $material->price_100mm2 * ($this->length * $this->width * $this->count) / 100 * 1.3;
         $order->created_at = date("Y-m-d H:i:s");
 
         if ($order->save()) {

@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?php $form = ActiveForm::begin(); ?>
 
     <div class="row">
-        <div class="col-md-12"><?= $form->field($model, 'providerId')->dropDownList($providerList, ['prompt' => '--Выберите поставщика--']) ?></div>
+        <div class="col-md-12"><?= $form->field($model, 'materialId')->dropDownList($materialList, ['prompt' => '--Выберите материал--']) ?></div>
         <div class="col-md-3"><?= $form->field($model, 'length')->textInput(['maxlength' => true]) ?></div>
 
         <div class="col-md-3"><?= $form->field($model, 'width')->textInput(['maxlength' => true]) ?></div>

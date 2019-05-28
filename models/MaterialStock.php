@@ -7,19 +7,19 @@ namespace app\models;
  * This is the model class for table "provider_stock".
  *
  * @property int $id
- * @property int $provider_id
+ * @property int $material_id
  * @property string $length_mm
  * @property string $width_mm
  * @property int $count
  */
-class ProviderStock extends \yii\db\ActiveRecord
+class MaterialStock extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'provider_stock';
+        return 'material_stock';
     }
 
     /**
@@ -28,10 +28,10 @@ class ProviderStock extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'provider_id', 'length_mm', 'width_mm', 'count'], 'required'],
-            [['id', 'provider_id', 'count'], 'integer'],
+            [['id', 'material_id', 'length_mm', 'width_mm', 'count'], 'required'],
+            [['id', 'material_id', 'count'], 'integer'],
             [['length_mm', 'width_mm'], 'number'],
-            [['id'], 'unique'],
+            [['material_id'], 'string', 'max' => 255],
         ];
     }
 
@@ -42,10 +42,10 @@ class ProviderStock extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'provider_id' => 'Provider ID',
-            'length_mm' => 'Length Mm',
-            'width_mm' => 'Width Mm',
-            'count' => 'Count',
+            'material_id' => 'Материал',
+            'length_mm' => 'Длина',
+            'width_mm' => 'Ширина',
+            'count' => 'Колличество',
         ];
     }
 }

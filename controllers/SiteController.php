@@ -10,7 +10,7 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\ContactForm;
 use app\models\OrderForm;
-use app\models\Provider;
+use app\models\Material;
 
 
 class SiteController extends BaseController
@@ -100,7 +100,7 @@ class SiteController extends BaseController
     public function actionOrder()
     {
         $orderForm = new OrderForm();
-        $providerList = Provider::getProviders();
+        $materialList = Material::getMaterials();
 
         if ($orderForm->load(Yii::$app->request->post())) {
             Yii::$app->session->setFlash('orderSuccess');
@@ -112,7 +112,7 @@ class SiteController extends BaseController
 
         return $this->render('order', [
             'model' => $orderForm,
-            'providerList' => $providerList
+            'materialList' => $materialList
         ]);
     }
 }

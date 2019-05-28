@@ -3,7 +3,7 @@
 use yii\helpers\Html;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Provider */
+/* @var $model app\models\Material */
 
 $this->title = 'Поставщик: ' . $model->company_name;
 $this->params['breadcrumbs'][] = ['label' => 'Поставщики', 'url' => ['index']];

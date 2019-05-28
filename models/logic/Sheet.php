@@ -22,8 +22,7 @@ class Sheet
     // if cutoff length is less than this constraint it goes to wastes
     private static $wasteConstraintMM = 10;
 
-    private static $sheetCount;
-    private static $sheetUsed;
+    public $material;
 
     // array of app\models\logic\Plank
     public $planks = [];
@@ -37,10 +36,11 @@ class Sheet
     // wastes' volume remained of sheet after a cut
     private $wasteVol = 0;
 
-    public function __construct($length, $width, $offcut = [])
+    public function __construct($length, $width, $material, $offcut = [])
     {
         $this->length = $length;
         $this->width = $width;
+        $this->material = $material;
 
         $this->offcuts = [0 => [self::DOWN_LEFT => [0, 0], self::UP_RIGHT => [$length, $width]]];
     }
@@ -100,12 +100,14 @@ class Sheet
             }
         }
 
+        $this->uniteOffcuts();
+
         return $planks;
     }
 
 
     /**
-     * TODO This function tries to put the plank to the sheet, if it is impossible returns false.
+     * This function tries to put the plank to the sheet, if it is impossible returns false.
      * param Plank $plank
      * @return bool whether plank was put
      */
@@ -177,32 +179,45 @@ class Sheet
             if ($offcutLength < self::$wasteConstraintMM || $offcutWidth < self::$wasteConstraintMM) {
                 unset($this->offcuts[$key]);
             }
-
-            // Unite offcuts if it is possible
-//            if (isset($previousOffcut) && isset($previousKey)) {
-//                if (
-//                    $previousOffcut[self::DOWN_LEFT][self::X] = $currentOffcut[self::DOWN_LEFT][self::X]
-//                    && $previousOffcut[self::UP_RIGHT][self::Y] = $currentOffcut[self::DOWN_LEFT][self::Y]
-//                    && $previousOffcut[self::UP_RIGHT][self::X] = $currentOffcut[self::UP_RIGHT][self::X]
-//                ) {
-//                    $this->offcuts[] = [
-//                        self::DOWN_LEFT => [
-//                            $previousOffcut[self::DOWN_LEFT][self::X],
-//                            $previousOffcut[self::DOWN_LEFT][self::Y]
-//                        ],
-//                        self::UP_RIGHT => [
-//                            $currentOffcut[self::UP_RIGHT][self::X],
-//                            $currentOffcut[self::UP_RIGHT][self::Y]
-//                        ]
-//                    ];
-//
-//                    unset($this->offcuts[$key]);
-//                    unset($this->offcuts[$previousKey]);
-//                }
-//            }
-
-            $previousOffcut = $currentOffcut;
-            $previousKey = $key;
         }
+    }
+
+    private function uniteOffcuts()
+    {
+        usort($this->offcuts, function ($a, $b) {
+            return $b[self::DOWN_LEFT][self::Y] > $a[self::DOWN_LEFT][self::Y];
+        });
+
+        foreach ($this->offcuts as $key => $curOffcut) {
+            if (isset($prevOffcut) && isset($prevKey)) {
+                $prevWidth = $prevOffcut[self::UP_RIGHT][self::Y] - $prevOffcut[self::DOWN_LEFT][self::Y];
+                if (
+                    $prevOffcut[self::DOWN_LEFT][self::X] == $curOffcut[self::DOWN_LEFT][self::X]
+                    && $prevOffcut[self::UP_RIGHT][self::X] == $curOffcut[self::UP_RIGHT][self::X]
+//                    && $prevOffcut[self::DOWN_LEFT][self::Y] + $prevWidth == $curOffcut[self::DOWN_LEFT][self::Y]
+                ) {
+
+                    $this->offcuts[$key] = [
+                        self::DOWN_LEFT => [
+                            $curOffcut[self::DOWN_LEFT][self::X],
+                            $curOffcut[self::DOWN_LEFT][self::Y]
+                        ],
+                        self::UP_RIGHT => [
+                            $prevOffcut[self::UP_RIGHT][self::X],
+                            $prevOffcut[self::UP_RIGHT][self::Y]
+                        ]
+                    ];
+
+                    $prevOffcut = $this->offcuts[$key];
+//                    unset($this->offcuts[$prevKey]);
+                }
+            } else {
+                $prevOffcut = $curOffcut;
+            }
+            $prevKey = $key;
+        }
+        //            if (isset($previousOffcut) && isset($previousKey)) {
+//
+//            }
     }
 }
