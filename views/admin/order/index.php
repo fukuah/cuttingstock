@@ -22,6 +22,9 @@ $this->params['breadcrumbs'][] = $this->title;
         'columns' => [
             [
                 'class' => 'yii\grid\CheckboxColumn',
+                'content' => function ($model, $key, $index, $column) {
+                    return '<input  type="checkbox" name="selection[]" value="' . $model->id . '" ' . (($model->status) ? 'disabled' : '') . '>';
+                },
             ],
             'id',
             [
@@ -36,12 +39,19 @@ $this->params['breadcrumbs'][] = $this->title;
                     return $model->material->material_name;
                 }
             ],
-            'status',
+            [
+                'attribute' => 'status',
+                'format' => 'html',
+                'value' => function ($model) {
+                    return ($model->status) ? '<p class="text-success">Готов</p>' : '<p class="text-secondary">Выполняется</p>';
+                }
+            ],
             'price',
             'created_at',
             'served_at',
             [
                 'class' => 'yii\grid\ActionColumn',
+
                 'template' => '{view}'
             ],
         ],

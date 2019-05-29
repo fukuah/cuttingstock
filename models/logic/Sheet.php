@@ -209,15 +209,12 @@ class Sheet
                     ];
 
                     $prevOffcut = $this->offcuts[$key];
-//                    unset($this->offcuts[$prevKey]);
                 }
             } else {
                 $prevOffcut = $curOffcut;
             }
             $prevKey = $key;
         }
-        //            if (isset($previousOffcut) && isset($previousKey)) {
-//
-//            }
+
     }
 }

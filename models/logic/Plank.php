@@ -27,6 +27,4 @@ class Plank
         $this->x = $x;
         $this->y = $y;
     }
-
-
 }

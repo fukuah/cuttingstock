@@ -38,7 +38,9 @@ AppAsset::register($this);
     ]);
     $navItems = [
         ['label' => 'Главная', 'url' => ['/site/index']],
-        ['label' => 'О нас', 'url' => ['/site/about']],
+        Yii::$app->user->isGuest ? ['label' => ''] : (
+        ['label' => 'Мои заказы', 'url' => ['/user/orders']]
+        ),
 //        ['label' => 'Вы поставщик?', 'url' => ['/site/contact']],
         Yii::$app->user->isGuest ? (
         ['label' => 'Войти', 'url' => ['/user/login']]

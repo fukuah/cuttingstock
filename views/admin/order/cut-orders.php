@@ -21,12 +21,6 @@ $sheetObjectJS = "
     var allSheets = JSON.parse(json);
 ";
 
-$changeMaterialJS = <<<JS
-    
-JS;
-
-$this->registerJS($changeMaterialJS, \yii\web\View::POS_END);
-
 $canvasAdaptiveJS = <<<JS
   $(document).ready(function(){
         var canvas = document.getElementById('responsive-canvas');
@@ -156,6 +150,7 @@ $this->registerJS($canvasAdaptiveJS, \yii\web\View::POS_END)
         <?= Html::beginForm(Url::to(['/admin/order/cut'])) ?>
         <?= Html::hiddenInput('orders', Json::encode($orders)) ?>
         <?= Html::hiddenInput('sheetsUsed', Json::encode($sheetsUsed)) ?>
+        <?= Html::hiddenInput('offcuts', Json::encode($offcuts)) ?>
         <?= Html::submitButton('Послать на распил', ['class' => 'btn btn-warning']) ?>
         <?= Html::endForm(); ?>
     </div>

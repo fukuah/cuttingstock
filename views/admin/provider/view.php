@@ -29,6 +29,7 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
+
             'material_name',
             'length_mm',
             'width_mm',
@@ -38,7 +39,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'attribute' => 'id',
                 'format' => 'html',
-                'label' => 'Материал для распила',
+                'label' => 'Обрезки',
                 'value' => function ($model) {
                     $html = '';
                     foreach ($model->providerStock as $item) {

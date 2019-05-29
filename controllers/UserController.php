@@ -9,6 +9,9 @@
 namespace app\controllers;
 
 
+use app\models\Order;
+use yii\data\ActiveDataProvider;
+use yii\data\ArrayDataProvider;
 use yii\filters\AccessControl;
 use yii\filters\VerbFilter;
 use yii\web\Response;
@@ -30,7 +33,7 @@ class UserController extends BaseController
                 'only' => ['logout'],
                 'rules' => [
                     [
-                        'actions' => ['logout', 'order'],
+                        'actions' => ['logout', 'orders'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -109,5 +112,23 @@ class UserController extends BaseController
             Yii::$app->session->setFlash('somethingWentWrong');
             return $this->goHome();
         }
+    }
+
+    public function actionOrders()
+    {
+        $user = Yii::$app->user->identity;
+
+        $orders = Order::findAll(['user_id' => $user->id]);
+
+//        $orderDataProviders = [];
+//        foreach ($orders as $order) {
+//            $orderDataProviders[] = new ArrayDataProvider([
+//                'allModels' => $order
+//            ]);
+//        }
+
+        return $this->render('orders', [
+            'models' => $orders
+        ]);
     }
 }

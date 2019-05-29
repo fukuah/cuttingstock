@@ -148,6 +148,10 @@ class OrderController extends BaseController
         }
 
         $allOrderIds = Yii::$app->request->post('selection');
+        if (empty($allOrderIds)) {
+            Yii::$app->session->setFlash('noOrderSelected');
+            return $this->redirect('index');
+        }
 
         $allOrderStocks = OrderStock::findAll(['order_id' => $allOrderIds]);
 
@@ -167,13 +171,6 @@ class OrderController extends BaseController
         $materialsAQ = Material::find()->where(['id' => $materialIds]);
         $dropDownMaterials = ArrayHelper::map($materialsAQ->all(), 'id', 'material_name');
 
-
-//        echo '<pre>';
-//        print_r(array_unique($materialIds));
-//        echo "\n";
-//        print_r($cuttingLists);
-//        echo '</pre>';
-//        exit;
 
         $sheets = [];
         foreach ($materialIds as $materiaId) {
@@ -199,9 +196,8 @@ class OrderController extends BaseController
         foreach ($sheets as $material => $msheets) {
             $sheetsUsed[$material] = count($msheets);
             foreach ($msheets as $msheet) {
-                $offcuts[] = $msheet->offcuts;
+                $offcuts[$material][] = $msheet->offcuts;
             }
-
         }
 
         return $this->render('cut-orders', [
@@ -210,6 +206,7 @@ class OrderController extends BaseController
             'materials' => $dropDownMaterials,
             'orders' => $orderIds,
             'sheetsUsed' => $sheetsUsed,
+            'offcuts' => $offcuts,
         ]);
     }
 
@@ -217,10 +214,27 @@ class OrderController extends BaseController
     {
         $jsonOrders = Yii::$app->request->post('orders');
         $jsonSheetsUsed = Yii::$app->request->post('sheetsUsed');
+        $offcutsJson = Yii::$app->request->post('offcuts');
 
         $orderIds = Json::decode($jsonOrders);
         $sheetsUsed = Json::decode($jsonSheetsUsed);
+        $allOffcuts = Json::decode($offcutsJson);
 
+
+        foreach ($allOffcuts as $material => $sheetOffcuts) {
+            foreach ($sheetOffcuts as $offcuts) {
+                foreach ($offcuts as $offcut) {
+                    $materialStock = new MaterialStock();
+                    $materialStock->material_id = $material;
+                    $materialStock->length_mm = $offcut[1][0] - $offcut[0][0];
+                    $materialStock->width_mm = $offcut[1][1] - $offcut[0][1];
+                    $materialStock->count = 1;
+                    if (!$materialStock->save()) {
+                        print_r($materialStock->errors);
+                    }
+                }
+            }
+        }
 
         $orders = Order::findAll(['id' => $orderIds]);
         foreach ($orders as $order) {
@@ -238,6 +252,7 @@ class OrderController extends BaseController
                 print_r($material->errors);
             }
         }
+
 
         return $this->redirect('index');
     }

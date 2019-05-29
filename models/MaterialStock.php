@@ -28,10 +28,11 @@ class MaterialStock extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['id', 'material_id', 'length_mm', 'width_mm', 'count'], 'required'],
-            [['id', 'material_id', 'count'], 'integer'],
+            [['material_id', 'length_mm', 'width_mm', 'count'], 'required'],
+            [['material_id', 'count'], 'integer'],
             [['length_mm', 'width_mm'], 'number'],
-            [['material_id'], 'string', 'max' => 255],
+//            [['list_uid'], 'unique'],
+//            [['list_uid'], 'string', 'max' => 50],
         ];
     }
 
